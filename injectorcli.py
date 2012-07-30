@@ -13,5 +13,5 @@ class InjectorCLI(object):
     def __init__(self):
         parser = argparse.ArgumentParser(description = 'PowerMTA Injector')
         parser.add_argument('-l', '--list', required = True, help = 'The email list to inject', metavar = 'email_list.txt')
-        parser.add_argument('-c', '--creative', required = True, help = 'The creative to send', metavar = 'example-creative')
+        parser.add_argument('-c', '--campaign', required = True, help = 'The campaign to send', metavar = 'example-campaign')
         self.args = parser.parse_args()
