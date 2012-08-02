@@ -30,9 +30,7 @@ class MailMergeSMTP(object):
             email.addRecipient(rcpt)
             email.addMergeData(self.__campaign_handler.GetBody())
 
-            #for some reason I get connection refused when I set a server and port.
-            #conn = Connection(self.__smtp_server_hostname, self.__smtp_server_port)
-            conn = Connection()
+            conn = Connection(str(self.__smtp_server_hostname), int(self.__smtp_server_port))
             conn.submit(email)
 
         except PmtaError as e:
