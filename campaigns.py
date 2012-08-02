@@ -1,5 +1,5 @@
 """
-This class handles loading the creatives.
+This class handles loading the campaigns.
 
 Comment:
     Yes, this is a simple class and probably won't
@@ -16,9 +16,9 @@ Comment:
 
 from glob import glob
 
-class Creatives(object):
-    def __init__(self, creative_directory):
-        self.__creative_directory = creative_directory
+class Campaigns(object):
+    def __init__(self, campaign_directory):
+        self.__campaign_directory = campaign_directory
         self.__froms_counter = 0
         self.__friendly_from_counter = 0
         self.__subjects_counter = 0
@@ -29,9 +29,45 @@ class Creatives(object):
         self.LoadSubjects__()
         self.LoadBodies__()
 
+    def GetFrom(self):
+        if self.__froms_counter == len(self.__froms):
+            self.__froms_counter = 0
+
+        from_address = self.__froms[self.__froms_counter]
+        self.__froms_counter += 1
+
+        return from_address
+
+    def GetFriendlyFrom(self):
+        if self.__friendly_from_counter == len(self.__friendly_froms):
+            self.__friendly_from_counter = 0
+
+        friendly_from = self.__friendly_froms[self.__friendly_from_counter]
+        self.__friendly_from_counter += 1
+
+        return friendly_from
+
+    def GetSubject(self):
+        if self.__subjects_counter == len(self.__subjects):
+            self.__subjects_counter = 0
+
+        subject = self.__subjects[self.__subjects_counter]
+        self.__subjects_counter += 1
+
+        return subject
+
+    def GetBody(self):
+        if self.__bodies_counter == len(self.__bodies):
+            self.__bodies_counter = 0
+
+        body = self.__bodies[self.__bodies_counter]
+        self.__bodies_counter += 1
+
+        return body
+
     def LoadFroms__(self):
         try:
-            with open('creatives/' + self.__creative_directory + '/froms') as fh:
+            with open('campaigns/' + self.__campaign_directory + '/froms') as fh:
                 self.__froms = [line.strip() for line in fh.readlines()]
 
                 if len(self.__froms) <= 0:
@@ -40,12 +76,12 @@ class Creatives(object):
 
                 fh.close()
         except IOError as e:
-            e.strerror = 'Froms file doesn\'t exist for the creative %s' % (creative)
+            e.strerror = 'Froms file doesn\'t exist for the campaign %s' % (campaign)
             raise e
 
     def LoadFriendlyFroms__(self):
         try:
-            with open('creatives/' + self.__creative_directory + "/friendly_froms") as fh:
+            with open('campaigns/' + self.__campaign_directory + "/friendly_froms") as fh:
                 self.__friendly_froms = [line.strip() for line in fh.readlines()]
 
                 if len(self.__friendly_froms) <= 0:
@@ -54,27 +90,36 @@ class Creatives(object):
 
                 fh.close()
         except IOError as e:
-            e.strerror = 'Domains file doesn\'t exist for the creative %s' % (creative)
+            e.strerror = 'Domains file doesn\'t exist for the campaign %s' % (campaign)
             raise e
 
     def LoadSubjects__(self):
         try:
-            with open('creatives/' + self.__creative_directory + '/subjects') as fh:
+            with open('campaigns/' + self.__campaign_directory + '/subjects') as fh:
                 self.__subjects = [line.strip() for line in fh.readlines()]
+
+                if len(self.__subjects) <= 0:
+                    fh.close()
+                    raise ValueError('The subjects field is empty')
+
                 fh.close()
         except IOError as e:
-            e.strerror = 'Subjects file doesn\'t exist for the creative %s' % (creative)
+            e.strerror = 'Subjects file doesn\'t exist for the campaign %s' % (campaign)
             raise e
+
     def LoadBodies__(self):
         try:
             self.__bodies = []
-            body_files = glob('creatives/' + self.__creative_directory + '/bodies/*')
+            body_files = glob('campaigns/' + self.__campaign_directory + '/bodies/*')
+            
+            if len(body_files) <= 0:
+                raise ValueError('No email body files found')
 
             for current_body in body_files:
                 with open(current_body) as fh:
                     self.__bodies.append(fh.read())
                     fh.close()
         except IOError as e:
-            e.strerror = 'Body file doesn\'t exist for the creative %s' % (creative)
+            e.strerror = 'Body file doesn\'t exist for the campaign %s' % (campaign)
             raise e
 
