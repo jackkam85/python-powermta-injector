@@ -7,7 +7,7 @@ Comment:
     I have this as it's own class right now.
 """
 
-import argparse
+import argparse, sys
 
 class InjectorCLI(object):
     def __init__(self):
@@ -16,4 +16,5 @@ class InjectorCLI(object):
         parser.add_argument('-c', '--campaign', required = True, help = 'The campaign to send', metavar = 'example-campaign')
         parser.add_argument('-s', '--hostname', required = False, help = 'The hostname or IP address of the PMTA server to inject to. If this option is omited it defaults to 127.0.0.1', metavar = '127.0.0.1')
         parser.add_argument('-p', '--port', required = False, help = 'The port the PMTA server is listening on. If this option is omited it defaults to 25', metavar = '25')
+        parser.add_argument('-f', '--use-from-as-redirect', required = False, help = 'If set to true it will use domains in the domains file as the campaigns template variable. If set to false or left blank it will use the domain part of the from address.')
         self.args = parser.parse_args()
