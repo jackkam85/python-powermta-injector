@@ -23,11 +23,13 @@ class Campaigns(object):
         self.__friendly_from_counter = 0
         self.__subjects_counter = 0
         self.__bodies_counter = 0
+        self.__domains_counter = 0
 
         self.LoadFroms__()
         self.LoadFriendlyFroms__()
         self.LoadSubjects__()
         self.LoadBodies__()
+        self.LoadDomains__()
 
     def GetFrom(self):
         if self.__froms_counter == len(self.__froms):
@@ -64,6 +66,18 @@ class Campaigns(object):
         self.__bodies_counter += 1
 
         return body
+
+    def GetDomain(self):
+        if len(self.__domains) <= 0:
+            return None
+
+        if self.__domains_counter == len(self.__domains):
+            self.__domains_counter = 0
+
+        domain = self.__domains[self.__domains_counter]
+        self.__domains_counter += 1
+
+        return domain
 
     def LoadFroms__(self):
         try:
@@ -111,7 +125,7 @@ class Campaigns(object):
         try:
             self.__bodies = []
             body_files = glob('campaigns/' + self.__campaign_directory + '/bodies/*')
-            
+
             if len(body_files) <= 0:
                 raise ValueError('No email body files found')
 
@@ -123,3 +137,17 @@ class Campaigns(object):
             e.strerror = 'Body file doesn\'t exist for the campaign %s' % (campaign)
             raise e
 
+    """
+        An exception isn't raised here on purpose, because the domains file isn't 
+        required. It's an option file that will allow you to use redirect domains
+        in your campaign and requires you to set a cli option. If the CLI option is 
+        set and this is empty an exception will be raise later in the program.
+    """
+    def LoadDomains__(self):
+        try:
+            with open('campaigns/' + self.__campaign_directory + '/domains') as fh:
+                self.__domains = [line.strip() for line in fh.readlines()]
+                fh.close()
+
+        except IOError as e:
+            pass
